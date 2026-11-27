@@ -1,6 +1,6 @@
 # GZ-airesearch-wiki
 
-Claude Code에서 작업한 프로젝트 디렉토리(코드, 실험 결과, 그래프, 노트)를 분석해서 **AI Research Confluence 위키**(docs.golfzon.company)에 정리 페이지로 올려주는 플러그인입니다. 정리 스타일은 팀 레퍼런스 페이지(키 파일의 `CONFLUENCE_TEMPLATE_PAGE_ID`)를 실행할 때마다 위키에서 읽어 따르고, MathJax 수식, 그래프 첨부, 접기(expand) 매크로를 지원합니다.
+Claude Code에서 작업한 프로젝트 디렉토리(코드, 실험 결과, 그래프, 노트)를 분석해서 **AI Research Confluence 위키**(docs.golfzon.company)에 정리 페이지로 올려주는 플러그인입니다. 정리 스타일은 팀 레퍼런스 페이지(키 파일의 `CONFLUENCE_TEMPLATE_PAGE_ID`)를 실행할 때마다 위키에서 읽어 따르고, MathJax 수식, 그래프 첨부, 접기(expand) 매크로, **직접 그린 구조도(SVG)** 를 지원합니다.
 
 ## 요구 사항
 
@@ -9,6 +9,8 @@ Claude Code에서 작업한 프로젝트 디렉토리(코드, 실험 결과, 그
 - **git**, 그리고 `github.com` 접속 (공개 저장소라 로그인 불필요)
 - 사내망에서 `https://docs.golfzon.company` 접속 가능
 - Confluence 권한: 레퍼런스 페이지(161383239) **보기**, 올릴 스페이스 **편집**
+- 구조도 아이콘: 처음 쓸 때 `cdn.jsdelivr.net` 에서 받아 캐시 (`~/.cache/gz-airesearch-wiki/icons`). 받지 못하면 대체 도형으로 그려짐
+- (선택) Chrome·Edge·Chromium 이 있으면 Claude 가 구조도를 PNG 로 직접 보고 다듬음. 없어도 동작함
 - 웹 검토 화면: 로컬 PC면 기본 브라우저, VS Code 원격(SSH)이면 VS Code가 포트를 자동 연결해 PC 브라우저로 열림
 
 ## 설치
@@ -83,6 +85,7 @@ GZ-airesearch-wiki 플러그인 최신 버전으로 업데이트해줘. 마켓�
 
 1. 참고 페이지의 내용과 실제 양식(뼈대)을 읽고 스타일 카드(`.wiki-ai/style-card.md`)를 정리한 뒤, 프로젝트를 분석해서 초안을 `.wiki-ai/page.xhtml`에 작성합니다. 작성 후 참고 페이지와 나란히 비교하는 자체 검토를 거칩니다.
 2. **작성 방향 질문**: 분석 결과를 바탕으로 무엇을 강조할지(핵심 메시지, 깊이, 뺄 것)를 먼저 묻고, 그 방향으로 씁니다.
+   - **구조도**: 프로젝트에 쓸 만한 구조도가 없으면 코드에서 확인한 구성요소·흐름으로 직접 그립니다(SVG). 기술 로고는 [Simple Icons](https://simpleicons.org)(CC0), 일반 아이콘은 [Lucide](https://lucide.dev)(ISC)를 쓰고, 겹침·글자 넘침을 자동 검사합니다.
 3. **검수**: 초안과 함께 **근거 장부**(주장·수치마다 파일:줄 / 계산 / 추론 표시)를 만들고 → 자동 검사(근거 없는 수치, 민감 정보, 위키 대비 변경점) → **독립 검수 에이전트**(초안과 프로젝트만 보고 사실·과장·누락 지적) → 지적은 **Claude가 직접 고치고**, 파일로 확정할 수 없거나 작성자가 정할 것만 **의문점**으로 남깁니다(0~5개).
 4. **사람 검수 (웹)**: 검토용 웹 화면이 브라우저에 바로 열립니다(VS Code 원격이면 포트 자동 연결). 페이지 전체를 읽으면서 문장을 드래그해 💬 수정 요청을 남기고, 의문점은 댓글의 선택지로 답하고, **검수 완료**를 누르면 Claude가 바로 반영하고 화면이 자동으로 새로 고쳐집니다. 의견 없이 검수 완료를 누르면 업로드 단계로 넘어갑니다.
 5. **업로드 위치를 고릅니다**: 기본 위치는 없습니다. 프로젝트 키워드로 관련 페이지가 모인 곳, 최근 올린 곳, 최근 작업한 곳을 근거와 함께 추천하고, 그중 고르거나 URL·페이지 이름을 직접 입력합니다. 제목도 이때 확인합니다.
@@ -102,6 +105,7 @@ GZ-airesearch-wiki 플러그인 최신 버전으로 업데이트해줘. 마켓�
 | 업로드 시 HTTP 403 | 고른 위치(스페이스)에 편집 권한이 없음 → 다른 위치 선택 |
 | 검토 화면이 안 열림 | 채팅에 나온 `http://localhost:<포트>/` 를 직접 열기. VS Code 원격이면 하단 "포트" 탭에서 해당 포트 열기 |
 | 검토 화면이 "반영 중"에서 멈춤 | F5(새로고침) |
+| 구조도 아이콘이 네모+글자로 나옴 | 아이콘을 `cdn.jsdelivr.net` 에서 받지 못함 (오프라인). 접속되는 곳에서 한 번 실행하면 캐시됨 |
 | 수식이 안 보임 | 브라우저가 MathJax(cdn.jsdelivr.net)를 받을 수 있는지. 위키 업로드에는 영향 없음 |
 
 ## 관리자: 새 버전 배포
@@ -120,8 +124,13 @@ skills/wiki-ai/SKILL.md           /wiki-ai 작업 절차
 skills/wiki-ai/reference/style-guide.md      작성 규칙, Confluence 문법 (MathJax, expand, 표, 이미지, 그림 패널)
 skills/wiki-ai/reference/reviewer-prompt.md  독립 검수 에이전트 지시문
 skills/wiki-ai/reference/review-format.md    검수 기록(review.json)·웹 의견(feedback.json) 형식
+skills/wiki-ai/reference/diagram-guide.md    구조도 작성 규칙 (레이아웃, 색, 아이콘, 사양 형식)
+skills/wiki-ai/reference/diagram-example.json 구조도 사양 예시 (이 플러그인의 동작 구조)
 skills/wiki-ai/scripts/confluence.py         Confluence REST·검사·미리보기·검토 서버 (Python 표준 라이브러리만 사용)
+skills/wiki-ai/scripts/diagram.py            구조도 사양(JSON) → SVG, 겹침 검사, 아이콘 검색, PNG 미리보기
 key.example                        개인 키 파일 템플릿
 ```
 
 `confluence.py`는 직접 실행할 수도 있습니다: `check`, `templates`, `suggest --keywords …`, `check-draft`, `serve`, `feedback`, `preview`, `review-stamp`, `review-mark`, `search <키워드>`, `where <URL|ID>`, `get <URL|ID|template> [--mode text|skeleton]`, `render <초안>`, `find --title`, `validate`, `publish --dry-run`
+
+`diagram.py`: `build <사양.json> <출력.svg> [--png]`, `check <사양.json>`, `render <svg>`, `icons lu|si <검색어>`

@@ -1,0 +1,37 @@
+{
+  "width": 1180, "height": 470,
+  "title": "wiki-ai 동작 구조",
+  "subtitle": "프로젝트 → 분석·초안·검수 → 사람 검토 → Confluence",
+  "groups": [
+    {"id": "local", "x": 24, "y": 60, "w": 250, "h": 380, "title": "로컬 프로젝트", "logo": "si:python"},
+    {"id": "cc", "x": 318, "y": 60, "w": 560, "h": 380, "title": "Claude Code  ·  /wiki-ai", "logo": "si:claude"},
+    {"id": "cf", "x": 922, "y": 60, "w": 234, "h": 380, "title": "Confluence", "logo": "si:confluence", "color": "#1868DB"}
+  ],
+  "nodes": [
+    {"id": "code", "x": 42, "y": 110, "w": 214, "h": 64, "icon": "lu:file-code", "title": "코드 · 설정", "sub": "model.py, configs/"},
+    {"id": "res", "x": 42, "y": 190, "w": 214, "h": 64, "icon": "lu:file-text", "title": "실험 결과", "sub": "metrics.csv, logs/"},
+    {"id": "fig", "x": 42, "y": 270, "w": 214, "h": 64, "icon": "lu:folder-open", "title": "그림 · 노트", "sub": "*.png, notes.md"},
+    {"id": "git", "x": 42, "y": 350, "w": 214, "h": 64, "icon": "lu:git-branch", "title": "Git 이력", "sub": "커밋 해시, 변경점"},
+    {"id": "an", "x": 338, "y": 110, "w": 250, "h": 64, "icon": "lu:scan-search", "title": "프로젝트 분석", "sub": "목적 · 방법 · 데이터 · 결과", "num": 1},
+    {"id": "dir", "x": 338, "y": 190, "w": 250, "h": 64, "icon": "lu:message-square-text", "title": "작성 방향 질문", "sub": "핵심 메시지 · 깊이", "num": 2},
+    {"id": "draft", "x": 338, "y": 270, "w": 250, "h": 64, "icon": "lu:file-text", "title": "초안 + 근거 장부", "sub": "page.xhtml · evidence.md", "num": 3},
+    {"id": "chk", "x": 608, "y": 110, "w": 250, "h": 64, "icon": "lu:shield-check", "title": "자동 검사 · 검수", "sub": "근거 없는 수치 · 민감 정보", "num": 4},
+    {"id": "web", "x": 608, "y": 190, "w": 250, "h": 64, "icon": "lu:monitor", "title": "웹 검토", "sub": "드래그 의견 · 의문점 답변", "num": 5},
+    {"id": "fin", "x": 608, "y": 270, "w": 250, "h": 64, "icon": "lu:list-checks", "title": "최종 확인", "sub": "위치 · 목차 · 검수 상태", "num": 6},
+    {"id": "user", "x": 338, "y": 356, "w": 520, "h": 64, "icon": "lu:user", "title": "작성자", "sub": "방향 결정 · 검수 · 업로드 승인 (사람이 최종 결정)", "color": "slate"},
+    {"id": "ref", "x": 940, "y": 110, "w": 198, "h": 64, "icon": "lu:file-text", "title": "레퍼런스 페이지", "sub": "문체 · 양식 기준"},
+    {"id": "page", "x": 940, "y": 270, "w": 198, "h": 64, "icon": "lu:cloud-upload", "title": "위키 페이지", "sub": "생성 · 업데이트", "num": 7}
+  ],
+  "edges": [
+    {"points": [[274, 250], [298, 250], [298, 142], [338, 142]]},
+    {"from": "an", "to": "dir"},
+    {"from": "dir", "to": "draft"},
+    {"from": "draft", "to": "chk", "from_side": "right", "to_side": "left", "via": 598},
+    {"from": "chk", "to": "web"},
+    {"from": "web", "to": "fin"},
+    {"from": "fin", "to": "page", "label": "업로드"},
+    {"from": "ref", "to": "chk", "style": "dashed", "label": "스타일 참고", "label_at": [899, 126]},
+    {"from": "fin", "to": "user", "from_side": "bottom", "to_side": "top", "style": "dashed", "points": [[733, 334], [733, 356]]},
+    {"from": "user", "to": "draft", "style": "dashed", "points": [[463, 356], [463, 334]]}
+  ]
+}

@@ -19,6 +19,7 @@ disable-model-invocation: true
 
 - 스크립트: `python3 ${CLAUDE_SKILL_DIR}/scripts/confluence.py <command>` — 아래에서 `CF`. (이 SKILL.md 옆의 `scripts/confluence.py`)
 - 작성 가이드: `${CLAUDE_SKILL_DIR}/reference/style-guide.md` — 초안 작성 전에 읽는다.
+- 구조도: `python3 ${CLAUDE_SKILL_DIR}/scripts/diagram.py <command>` — 아래에서 `DG`. 그리기 전에 `${CLAUDE_SKILL_DIR}/reference/diagram-guide.md` 를 읽는다.
 - 작업 폴더: `PROJECT/.wiki-ai/` — 처음 만들 때 내용 `*` 인 `.gitignore` 를 함께 만든다 (git 에 섞이지 않게).
 
 이 작업은 회사 위키에 글을 올리는 외부 공개 작업이다. **업로드 전에 반드시 사용자 확인을 받는다.**
@@ -56,7 +57,8 @@ disable-model-invocation: true
 - **방법/구조**: 주요 소스 코드, 모델 정의, 설정 파일, 진입점 스크립트
 - **데이터**: 데이터셋 경로·규모·분할·기간
 - **결과**: `results/`, `outputs/`, `logs/`, `*.csv`, `*.json` 지표, 노트북 출력
-- **그림**: `*.png`, `*.jpg`, `*.svg` — 쓸 만한 것은 Read 로 직접 보고 무엇을 보여주는지 확인한다
+- **그림**: `*.png`, `*.jpg`, `*.svg` — 쓸 만한 것은 Read 로 직접 보고 무엇을 보여주는지 확인한다. 쓸 만한 구조도(모델·시스템 그림)가 없으면 4단계에서 직접 그린다
+- **구조**: 구조도에 들어갈 구성요소와 흐름 (모듈·클래스·스크립트 간 호출, 데이터 경로, 외부 서비스, 쓰는 기술 스택) — 파일:줄 근거와 함께
 - **수식**: 손실함수, 지표, 변환 등 코드/노트에 있는 핵심 식
 - **이력**: git 이면 `git log --oneline -20`, 현재 커밋 해시
 
@@ -89,8 +91,9 @@ AskUserQuestion 한 번에 2~3개 질문 (분석 결과로 옵션을 구체적�
    ```
    - 근거는 `PROJECT 기준 경로:줄` (또는 `:시작-끝`), `계산: 식`, `위키: URL`, `사용자: 대화에서 받은 정보`.
    - 상태는 `확인` (파일에 그대로 있음) / `추론` (해석·유도·일반 지식) / `사용자` (대화로 받음). **추론을 확인으로 적지 않는다.**
-4. 첨부 이미지 목록을 `PROJECT/.wiki-ai/attach.txt` 에 한 줄씩 `PROJECT 기준 경로=첨부이름` 으로 적는다 (첨부이름 = 본문 `ri:filename`, 영문·고유). `validate` · `preview` · `serve` · `publish` 가 이 파일을 자동으로 읽으므로 `--attach` 는 생략해도 된다.
-5. `CF validate PROJECT/.wiki-ai/page.xhtml` — 통과할 때까지 고친다.
+4. **구조도** (2번 섹션에 구조도가 필요하고 프로젝트에 쓸 만한 그림이 없을 때, 보통 1~2장): `diagram-guide.md` 를 따라 사양을 `PROJECT/.wiki-ai/diagrams/<이름>.json` 에 쓰고 `DG build <사양> PROJECT/.wiki-ai/diagrams/<첨부이름>.svg --png`. `✗` 는 모두 고치고, PNG 가 나오면 Read 로 직접 보고 정렬·흐름을 다듬는다. 박스·화살표마다 근거 장부에 한 줄. 로고를 직접 그리거나 외부 이미지를 넣지 않는다 (아이콘은 `DG icons` 로 찾은 것만).
+5. 첨부 이미지 목록을 `PROJECT/.wiki-ai/attach.txt` 에 한 줄씩 `PROJECT 기준 경로=첨부이름` 으로 적는다 (첨부이름 = 본문 `ri:filename`, 영문·고유). `validate` · `preview` · `serve` · `publish` 가 이 파일을 자동으로 읽으므로 `--attach` 는 생략해도 된다.
+6. `CF validate PROJECT/.wiki-ai/page.xhtml` — 통과할 때까지 고친다.
 
 ## 5. 양식 자체 검토
 
@@ -99,6 +102,7 @@ AskUserQuestion 한 번에 2~3개 질문 (분석 결과로 옵션을 구체적�
    - 1번 섹션만 읽어도 무엇을 왜 했고 결과와 한계가 무엇인지 알 수 있는가? 3단계의 핵심 메시지가 앞에 있는가?
    - 참고 페이지 독자가 "같은 사람이 썼다"고 느낄 만큼 목차 흐름·문체·양식이 같은가?
    - 표와 그림이 참고 페이지처럼 정돈돼 있는가 (머리글, 너비, 비교 배치, 접기)?
+   - 직접 그린 구조도가 본문 설명·코드와 같은 이름과 흐름인가? (`DG check` 통과, PNG 로 본 모양이 정돈돼 있는가)
    - 빈 섹션이나 자리만 채운 문장은 없는가?
 
 ## 6. 검수 (매번)
