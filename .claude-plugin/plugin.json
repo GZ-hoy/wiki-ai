@@ -1,0 +1,7 @@
+{
+  "name": "GZ-airesearch-wiki",
+  "version": "1.0.1",
+  "description": "Claude Code 프로젝트를 분석해 AI Research Confluence 위키 페이지로 정리·업로드하는 /wiki-ai 스킬",
+  "author": { "name": "AI Research" },
+  "keywords": ["confluence", "wiki", "documentation", "airesearch"]
+}

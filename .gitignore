@@ -1,0 +1,5 @@
+.wiki_key
+key
+*.key
+.wiki-ai/
+__pycache__/

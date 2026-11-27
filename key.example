@@ -1,0 +1,7 @@
+# ~/.config/gz-airesearch-wiki/key 로 복사 후 값 채우기 (chmod 600). 절대 커밋하지 마세요.
+CONFLUENCE_BASE_URL=https://docs.golfzon.company
+CONFLUENCE_API_TOKEN=
+CONFLUENCE_EMAIL=
+CONFLUENCE_SPACE_KEY=airesearch
+# 스타일 참고 페이지 ID, 쉼표로 여러 개 가능
+CONFLUENCE_TEMPLATE_PAGE_ID=161383239
