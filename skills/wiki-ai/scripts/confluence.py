@@ -21,8 +21,10 @@ Commands
   publish --title T --body FILE [--attach PATH[=NAME] ...] [--state FILE]
           [--page-id ID] [--parent ID] [--adopt] [--force] [--dry-run]
 
-Config: KEY=VALUE lines read from $GZ_WIKI_KEY_FILE, else
-~/.config/gz-airesearch-wiki/key. Environment variables of the same name win.
+Config: KEY=VALUE lines read from $GZ_WIKI_KEY_FILE, else the first `.wiki_key`
+found in the current directory or its parents, else the legacy
+~/.config/gz-airesearch-wiki/key. `init` creates ./.wiki_key. Environment
+variables of the same name win.
 Secret values are never printed.
 """
 import argparse
@@ -42,7 +44,9 @@ from datetime import datetime, timezone
 from html.entities import name2codepoint
 from pathlib import Path
 
-DEFAULT_KEY_FILE = Path("~/.config/gz-airesearch-wiki/key").expanduser()
+CONFIG_DIR = Path("~/.config/gz-airesearch-wiki").expanduser()
+KEY_NAME = ".wiki_key"
+LEGACY_KEY_FILE = CONFIG_DIR / "key"
 KEYS = [
     "CONFLUENCE_BASE_URL",
     "CONFLUENCE_API_TOKEN",
@@ -79,8 +83,37 @@ class Fail(Exception):
 
 # ----------------------------------------------------------------- config / http
 def key_file_path():
+    """$GZ_WIKI_KEY_FILE > ./.wiki_key (or a parent's) > legacy ~/.config path.
+    If none exists, returns ./.wiki_key (where `init` creates it)."""
     env = os.environ.get("GZ_WIKI_KEY_FILE")
-    return Path(env).expanduser() if env else DEFAULT_KEY_FILE
+    if env:
+        return Path(env).expanduser()
+    cwd = Path.cwd()
+    for d in (cwd, *cwd.parents):
+        if (d / KEY_NAME).is_file():
+            return d / KEY_NAME
+    if LEGACY_KEY_FILE.is_file():
+        return LEGACY_KEY_FILE
+    return cwd / KEY_NAME
+
+
+def git_exclude(path):
+    """Add the key file to the enclosing git repo's local exclude list
+    (.git/info/exclude — not committed, does not touch .gitignore)."""
+    for d in (path.parent, *path.parent.parents):
+        g = d / ".git"
+        if g.is_dir():
+            ex = g / "info" / "exclude"
+            rel = "/" + path.relative_to(d).as_posix()
+            cur = ex.read_text(encoding="utf-8") if ex.exists() else ""
+            if rel not in cur.split():
+                ex.parent.mkdir(parents=True, exist_ok=True)
+                sep = "" if not cur or cur.endswith("\n") else "\n"
+                ex.write_text(cur + sep + rel + "\n", encoding="utf-8")
+            return d
+        if g.exists():  # worktree/submodule: .git is a file
+            return None
+    return None
 
 
 def parse_dotenv(path):
@@ -561,7 +594,14 @@ def cmd_init(a):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(KEY_TEMPLATE, encoding="utf-8")
     path.chmod(0o600)
-    print(f"생성함: {path} (권한 600). 토큰을 채워주세요.")
+    print(f"생성함: {path} (권한 600). CONFLUENCE_API_TOKEN 을 채워주세요.")
+    try:
+        repo = git_exclude(path)
+    except OSError:
+        repo = None
+    if repo:
+        print(f"git 제외 등록: {repo / '.git' / 'info' / 'exclude'} 에 /{path.relative_to(repo).as_posix()} 추가 (커밋되지 않음)")
+    print("이 폴더나 하위 폴더에서 실행하면 이 키 파일을 씁니다.")
 
 
 def cmd_check(a):
@@ -690,7 +730,7 @@ def cmd_where(a):
         print("하위 페이지: " + ", ".join(k["title"] for k in kids))
 
 
-HISTORY_FILE = DEFAULT_KEY_FILE.parent / "history.json"
+HISTORY_FILE = CONFIG_DIR / "history.json"
 
 
 def record_history(parent_id, path, space):

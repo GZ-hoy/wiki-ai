@@ -1,4 +1,4 @@
-# ~/.config/gz-airesearch-wiki/key 로 복사 후 값 채우기 (chmod 600). 절대 커밋하지 마세요.
+# 프로젝트 폴더(또는 상위 폴더)에 .wiki_key 로 복사 후 토큰 채우기. 절대 커밋하지 마세요.
 CONFLUENCE_BASE_URL=https://docs.golfzon.company
 CONFLUENCE_API_TOKEN=
 CONFLUENCE_EMAIL=
